@@ -60,7 +60,11 @@ ClientAliveCountMax       2
 | docker | ✅ active |
 | netdata | ✅ active |
 | unattended-upgrades | ✅ active |
-| fail2ban | ❌ inactive |
+| crowdsec | ✅ active |
+| crowdsec-firewall-bouncer | ✅ active |
+| coturn | ✅ active |
+| xray | ✅ active |
+| fail2ban | — не используется (заменён CrowdSec) |
 
 ---
 
@@ -140,11 +144,22 @@ HTTPS через Let's Encrypt (`/etc/letsencrypt/live/doi.by/`).
 
 ---
 
+## CrowdSec
+
+Используется вместо Fail2ban. Состав:
+
+- `crowdsec` — агент, анализирует логи и детектирует атаки
+- `crowdsec-firewall-bouncer-iptables` — блокирует IP через iptables + ipset
+- Дополнительно использует облачный фид репутации IP-адресов
+
+Версия: `1.7.7`, bouncer: `0.0.34`.
+
+---
+
 ## Что требует внимания
 
 | Приоритет | Проблема | Действие |
 |-----------|----------|----------|
-| 🔴 Высокий | Fail2ban не запущен | `systemctl enable --now fail2ban`, создать `jail.d/sshd.local` |
 | 🔴 Высокий | Netdata открыт на 0.0.0.0:19999 | Ограничить через netdata.conf или UFW |
 | 🟡 Средний | `/etc/docker/daemon.json` отсутствует | Добавить лимиты логов и `live-restore` |
 | 🟡 Средний | Основной sshd_config содержит конфликтующие настройки | Почистить — убрать `PermitRootLogin yes`, `X11Forwarding yes` |
