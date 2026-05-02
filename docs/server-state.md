@@ -144,6 +144,23 @@ HTTPS через Let's Encrypt (`/etc/letsencrypt/live/doi.by/`).
 
 ---
 
+## Xray
+
+Протокол: **VLESS + REALITY** — маскируется под TLS-трафик `www.microsoft.com`.
+
+- Слушает на `127.0.0.1:8443` (за Nginx, SNI-routing на порту 443)
+- Flow: `xtls-rprx-vision`
+- 1 клиент: `deploy@doi.by`
+- DNS через DoH: Cloudflare + Google
+- Запускается от `nobody`, `NoNewPrivileges=true`
+- Роутинг блокирует: приватные IP, BitTorrent, рекламные домены
+
+Конфиг: `/usr/local/etc/xray/config.json`
+
+> ⚠️ В `/usr/local/etc/xray/` лежат 3 файла бэкапов со старыми ключами — стоит удалить.
+
+---
+
 ## CrowdSec
 
 Используется вместо Fail2ban. Состав:
