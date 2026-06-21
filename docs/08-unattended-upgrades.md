@@ -25,6 +25,9 @@ nano /etc/apt/apt.conf.d/50unattended-upgrades
 Unattended-Upgrade::Allowed-Origins {
     "${distro_id}:${distro_codename}-security";
     "${distro_id}:${distro_codename}-updates";
+    // ESM-репозитории Ubuntu Pro (подхватываются автоматически если pro attach выполнен)
+    "UbuntuESMApps:${distro_codename}-apps-security";
+    "UbuntuESM:${distro_codename}-infra-security";
 };
 
 // Автоматически удалять неиспользуемые зависимости

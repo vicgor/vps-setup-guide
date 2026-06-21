@@ -48,7 +48,7 @@ systemctl restart netdata
 
 ```bash
 # На локальной машине
-ssh -L 19999:localhost:19999 myuser@YOUR_SERVER_IP
+ssh -L 19999:localhost:19999 myuser@YOUR_SERVER_IP -p 2222
 
 # Открыть в браузере
 http://localhost:19999

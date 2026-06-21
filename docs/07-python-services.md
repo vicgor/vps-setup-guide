@@ -29,7 +29,7 @@ chown myuser:myuser /opt/projects
 ```bash
 # Клонировать проект
 cd /opt/projects
-git clone git@github.com:vicgor/jira-telegram-bot.git
+git clone git@github.com:YOUR_USERNAME/YOUR_PROJECT.git
 
 # Создать .env из примера
 cp .env.example .env

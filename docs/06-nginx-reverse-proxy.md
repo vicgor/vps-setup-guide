@@ -59,10 +59,10 @@ certbot renew --dry-run
 ```nginx
 # Добавить в server{} блок или /etc/nginx/conf.d/security.conf
 add_header X-Frame-Options "SAMEORIGIN" always;
-add_header X-XSS-Protection "1; mode=block" always;
 add_header X-Content-Type-Options "nosniff" always;
 add_header Referrer-Policy "no-referrer-when-downgrade" always;
 add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+add_header Permissions-Policy "geolocation=(), microphone=(), camera=()" always;
 ```
 
 ## 6. Rate limiting (защита от DDoS)

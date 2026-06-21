@@ -22,14 +22,15 @@ ufw default allow outgoing
 
 ```bash
 # SSH — обязательно до включения UFW!
-ufw allow 22/tcp
+# Используем нестандартный порт (см. 02-ssh-hardening.md)
+ufw allow 2222/tcp
 
 # HTTP и HTTPS
 ufw allow 80/tcp
 ufw allow 443/tcp
 
 # Rate limit для SSH (защита от brute-force)
-ufw limit 22/tcp
+ufw limit 2222/tcp
 ```
 
 ## 4. Включить UFW

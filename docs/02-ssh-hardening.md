@@ -38,18 +38,22 @@ nano /etc/ssh/sshd_config
 Параметры для установки:
 
 ```text
-Port 22
+Port 2222
 PermitRootLogin no
 PasswordAuthentication no
+KbdInteractiveAuthentication no
 PubkeyAuthentication yes
 AuthorizedKeysFile .ssh/authorized_keys
+AllowUsers myuser
 X11Forwarding no
 AllowTcpForwarding no
 MaxAuthTries 3
-LoginGraceTime 30
+LoginGraceTime 20
 ClientAliveInterval 300
 ClientAliveCountMax 2
 ```
+
+> ⚠️ Нестандартный порт (2222 вместо 22) снижает шум от автоматических сканеров. Не забудь открыть его в UFW перед перезапуском SSH.
 
 ## 5. Проверка конфига и перезапуск
 
@@ -65,10 +69,10 @@ systemctl restart ssh
 
 ```bash
 # Должен работать
-ssh myuser@YOUR_SERVER_IP
+ssh myuser@YOUR_SERVER_IP -p 2222
 
 # Должен быть запрещён
-ssh root@YOUR_SERVER_IP  # Permission denied
+ssh root@YOUR_SERVER_IP -p 2222  # Permission denied
 ```
 
 ---
