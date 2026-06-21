@@ -17,7 +17,7 @@ apt autoremove -y
 ## 2. Установка базовых пакетов
 
 ```bash
-apt install -y curl wget git htop nano ufw fail2ban unattended-upgrades apt-listchanges
+apt install -y curl wget git htop nano ufw unattended-upgrades apt-listchanges
 ```
 
 ## 3. Создание непривилегированного пользователя

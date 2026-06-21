@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a **documentation-only** repository — a VPS setup guide for Ubuntu 24.04 LTS. There are no build steps, test suites, or runnable code. All content lives in `docs/` as Markdown files.
 
-Target stack: Python 3.11+, Docker, Nginx, MySQL 8, Telegram bots. Tools covered: UFW, CrowdSec (Fail2ban заменён), unattended-upgrades, Netdata.
+Target stack: Python 3.11+, Docker, Nginx, MySQL 8, Telegram bots. Tools covered: UFW, CrowdSec, unattended-upgrades, Netdata.
 
 ## Document Structure
 
