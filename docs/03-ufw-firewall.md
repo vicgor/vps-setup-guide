@@ -73,4 +73,4 @@ ufw allow from YOUR_IP to any port 19999
 ---
 
 ## Следующий шаг
-→ [04-fail2ban.md](04-fail2ban.md)
+→ [04-crowdsec.md](04-crowdsec.md)

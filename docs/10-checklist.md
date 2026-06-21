@@ -33,11 +33,12 @@
 - [ ] Rate limit на SSH (`ufw limit 22/tcp`)
 - [ ] Порты мониторинга ограничены по IP
 
-## Fail2ban
+## CrowdSec
 
-- [ ] Fail2ban установлен и запущен
-- [ ] SSH-джейл активен (`fail2ban-client status sshd`)
-- [ ] Свой IP добавлен в ignoreip
+- [ ] CrowdSec установлен и запущен (`systemctl status crowdsec`)
+- [ ] Bouncer зарегистрирован (`cscli bouncers list`)
+- [ ] SSH-коллекция активна (`cscli collections list`)
+- [ ] Свой IP добавлен в whitelist
 
 ## Автообновления
 
