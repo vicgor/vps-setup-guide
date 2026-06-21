@@ -64,7 +64,6 @@ ClientAliveCountMax       2
 | crowdsec-firewall-bouncer | ✅ active |
 | coturn | ✅ active |
 | xray | ✅ active |
-| fail2ban | — не используется (заменён CrowdSec) |
 
 ---
 
@@ -180,7 +179,7 @@ HTTPS через Let's Encrypt (`/etc/letsencrypt/live/doi.by/`).
 
 ## CrowdSec
 
-Используется вместо Fail2ban. Состав:
+Состав:
 
 - `crowdsec` — агент, анализирует логи и детектирует атаки
 - `crowdsec-firewall-bouncer-iptables` — блокирует IP через iptables + ipset
