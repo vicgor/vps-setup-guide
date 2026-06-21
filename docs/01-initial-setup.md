@@ -63,6 +63,32 @@ echo "127.0.1.1 my-vps" >> /etc/hosts
 localectl set-locale LANG=en_US.UTF-8
 ```
 
+## 8. Ubuntu Pro (опционально)
+
+Бесплатная подписка для физических лиц (до 5 машин). Даёт расширенные патчи безопасности (ESM), Livepatch и аудит-инструменты.
+
+```bash
+# Установить клиент (обычно уже есть в Ubuntu 22.04+)
+apt install ubuntu-advantage-tools -y
+
+# Привязать машину к аккаунту (токен — на ubuntu.com/pro)
+pro attach YOUR_TOKEN
+```
+
+Рекомендуемые сервисы после привязки:
+
+```bash
+pro enable esm-infra    # расширенные патчи для main-пакетов
+pro enable esm-apps     # расширенные патчи для universe-пакетов
+pro enable livepatch    # патчи ядра без перезагрузки
+```
+
+Проверка статуса:
+
+```bash
+pro status
+```
+
 ---
 
 ## Следующий шаг

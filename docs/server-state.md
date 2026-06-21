@@ -189,6 +189,21 @@ HTTPS через Let's Encrypt (`/etc/letsencrypt/live/doi.by/`).
 
 ---
 
+## Ubuntu Pro
+
+Подписка: **Ubuntu Pro — free personal** (`vicgor@gmail.com`)
+
+| Сервис | Статус | Описание |
+|--------|--------|----------|
+| `esm-infra` | ✅ enabled | Расширенные патчи безопасности для main-пакетов |
+| `esm-apps` | ✅ enabled | Расширенные патчи безопасности для universe-пакетов |
+| `livepatch` | ✅ enabled | Патчи ядра без перезагрузки |
+| `usg` | ✅ enabled | Аудит соответствия CIS/DISA |
+| `fips-updates` | — disabled | Не требуется |
+| `realtime-kernel` | — disabled | Не требуется |
+
+---
+
 ## Что требует внимания
 
 | Приоритет | Проблема | Действие |
