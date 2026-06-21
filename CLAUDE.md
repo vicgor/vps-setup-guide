@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a **documentation-only** repository — a VPS setup guide for Ubuntu 24.04 LTS. There are no build steps, test suites, or runnable code. All content lives in `docs/` as Markdown files.
 
-Target stack: Python 3.11+, Docker, Nginx, MySQL 8, Telegram bots. Tools covered: UFW, Fail2ban, unattended-upgrades, Netdata.
+Target stack: Python 3.11+, Docker, Nginx, MySQL 8, Telegram bots. Tools covered: UFW, CrowdSec (Fail2ban заменён), unattended-upgrades, Netdata.
 
 ## Document Structure
 
@@ -15,7 +15,7 @@ The `docs/` directory contains 10 sequentially numbered guides that must be foll
 1. `01-initial-setup.md` — system update, user creation, timezone, locale
 2. `02-ssh-hardening.md` — ed25519 keys, disable root/password login
 3. `03-ufw-firewall.md` — UFW rules (22, 80, 443), rate limiting SSH
-4. `04-fail2ban.md` — brute-force protection for SSH
+4. `04-fail2ban.md` — brute-force protection for SSH (на сервере заменён на CrowdSec)
 5. `05-docker-setup.md` — Docker + Docker Compose, daemon.json hardening
 6. `06-nginx-reverse-proxy.md` — Nginx as reverse proxy, Certbot/HTTPS, security headers
 7. `07-python-services.md` — deploy via Docker Compose (preferred) or systemd units; projects live in `/opt/projects/`
