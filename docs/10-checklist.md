@@ -63,6 +63,18 @@
 - [ ] Netdata установлен
 - [ ] Доступ к Netdata ограничен по IP или через SSH-туннель
 
+## VLESS + Xray (опционально)
+
+- [ ] Xray установлен (`/usr/local/bin/xray`)
+- [ ] Конфиг VLESS + Reality создан (`/usr/local/etc/xray/config.json`)
+- [ ] UUID и ключи Reality сгенерированы и сохранены
+- [ ] Xray запущен (`systemctl status xray`)
+- [ ] Порт 443 открыт в UFW
+- [ ] Клиент настроен и подключение проверено
+
 ---
 
 > ✅ Все пункты отмечены? Сервер готов к деплою приложений.
+
+## Следующий шаг
+→ [11-vless-xray.md](11-vless-xray.md)
