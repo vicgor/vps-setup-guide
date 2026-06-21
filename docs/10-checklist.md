@@ -29,8 +29,8 @@
 
 - [ ] UFW включён (`ufw enable`)
 - [ ] Политика по умолчанию: deny incoming
-- [ ] Открыты: 22/tcp, 80/tcp, 443/tcp
-- [ ] Rate limit на SSH (`ufw limit 22/tcp`)
+- [ ] Открыты: 2222/tcp, 80/tcp, 443/tcp
+- [ ] Rate limit на SSH (`ufw limit 2222/tcp`)
 - [ ] Порты мониторинга ограничены по IP
 
 ## CrowdSec
