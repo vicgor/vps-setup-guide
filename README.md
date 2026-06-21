@@ -29,7 +29,7 @@ apt update && apt upgrade -y
 adduser myuser && usermod -aG sudo myuser
 
 # 3. Настроить UFW
-ufw allow 22/tcp && ufw allow 80/tcp && ufw allow 443/tcp && ufw enable
+ufw allow 2222/tcp && ufw allow 80/tcp && ufw allow 443/tcp && ufw enable
 
 # 4. Установить CrowdSec
 curl -s https://packagecloud.io/install/repositories/crowdsec/crowdsec/script.deb.sh | bash
