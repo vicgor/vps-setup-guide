@@ -40,6 +40,14 @@
 - [ ] SSH-коллекция активна (`cscli collections list`)
 - [ ] Свой IP добавлен в whitelist
 
+## Ubuntu Pro (опционально)
+
+- [ ] Машина привязана к аккаунту (`pro attach`)
+- [ ] `esm-infra` включён (`pro enable esm-infra`)
+- [ ] `esm-apps` включён (`pro enable esm-apps`)
+- [ ] `livepatch` включён (`pro enable livepatch`)
+- [ ] Статус проверен (`pro status`)
+
 ## Автообновления
 
 - [ ] unattended-upgrades установлен и настроен
