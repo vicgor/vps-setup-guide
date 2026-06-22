@@ -10,11 +10,11 @@ Target stack: Python 3.11+, Docker, Nginx, MySQL 8, Telegram bots. Tools covered
 
 ## Document Structure
 
-The `docs/` directory contains 10 sequentially numbered guides that must be followed in order:
+The `docs/` directory contains 12 sequentially numbered guides that must be followed in order:
 
 1. `01-initial-setup.md` — system update, user creation, timezone, locale
 2. `02-ssh-hardening.md` — ed25519 keys, disable root/password login
-3. `03-ufw-firewall.md` — UFW rules (22, 80, 443), rate limiting SSH
+3. `03-ufw-firewall.md` — UFW rules (2222, 80, 443), rate limiting SSH
 4. `04-crowdsec.md` — brute-force protection via CrowdSec (agent + iptables bouncer)
 5. `05-docker-setup.md` — Docker + Docker Compose, daemon.json hardening
 6. `06-nginx-reverse-proxy.md` — Nginx as reverse proxy, Certbot/HTTPS, security headers
@@ -23,7 +23,7 @@ The `docs/` directory contains 10 sequentially numbered guides that must be foll
 9. `09-monitoring.md` — Netdata, access restricted by IP or SSH tunnel
 10. `10-checklist.md` — pre-deploy checklist covering all of the above
 11. `11-vless-xray.md` — VLESS + Reality proxy via Xray (optional, circumvention)
-12. `12-backup.md` — backup strategy: Postgres pg_dump, configs, systemd timer, rotation
+12. `12-backup.md` — backup via Restic: incremental snapshots, Postgres pre-dump, systemd timer, retention policy
 
 ## Conventions
 
