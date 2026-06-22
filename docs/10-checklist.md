@@ -91,12 +91,14 @@
 
 > ✅ Все пункты отмечены? Сервер готов к деплою приложений.
 
-## Резервное копирование
+## Резервное копирование (Restic)
 
-- [ ] Скрипт `/opt/backups/backup.sh` создан и протестирован
-- [ ] `backup.timer` активен (`systemctl list-timers backup.timer`)
-- [ ] Postgres дамп создаётся корректно
-- [ ] Ротация старых бэкапов настроена (7 дней)
+- [ ] Restic установлен (`restic version`)
+- [ ] `/etc/restic-env` настроен (репозиторий, пароль)
+- [ ] `/etc/restic-includes.txt` содержит все критичные пути
+- [ ] `restic-backup.timer` активен (`systemctl list-timers restic-backup.timer`)
+- [ ] Первый снапшот создан (`sudo restic snapshots`)
+- [ ] Retention настроен (7 daily / 4 weekly / 6 monthly)
 
 ---
 

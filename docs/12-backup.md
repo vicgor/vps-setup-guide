@@ -1,161 +1,138 @@
-# 12 — Резервное копирование
+# 12 — Резервное копирование (Restic)
 
 ## Цель
-Защитить критичные данные от потери при сбое сервера или случайного удаления.
+Ежедневное инкрементальное резервное копирование критичных данных через Restic с автоматической ротацией снапшотов.
 
 ---
 
-## Что бэкапить
+## Архитектура
 
-| Данные | Путь | Приоритет |
-|--------|------|-----------|
-| Matrix Postgres (история переписки) | volume в `/opt/matrix/postgres/data/` | 🔴 Критично |
-| Matrix конфиги (Synapse, Element) | `/opt/matrix/synapse/`, `/opt/matrix/element/` | 🔴 Критично |
-| Xray конфиг (ключи Reality) | `/usr/local/etc/xray/config.json` | 🟠 Важно |
-| Nginx vhosts | `/etc/nginx/sites-enabled/` | 🟠 Важно |
-| Let's Encrypt сертификаты | `/etc/letsencrypt/` | 🟠 Важно |
-| LiveKit конфиги | `/opt/livekit/` | 🟡 Средний |
-| SSH конфиг | `/etc/ssh/sshd_config.d/` | 🟡 Средний |
-
-> Postgres нельзя бэкапить простым копированием файлов — только через `pg_dump`.
+| Компонент | Расположение |
+|-----------|-------------|
+| Бинарник | `/usr/bin/restic` (v0.16.4) |
+| Переменные окружения (репозиторий, пароль) | `/etc/restic-env` (права `600 root`) |
+| Список включаемых путей | `/etc/restic-includes.txt` |
+| Список исключений | `/etc/restic-excludes.txt` |
+| Скрипт предварительного дампа Postgres | `/usr/local/sbin/restic-predump.sh` (права `700 root`) |
+| systemd-сервис | `/etc/systemd/system/restic-backup.service` |
+| systemd-таймер | `/etc/systemd/system/restic-backup.timer` |
 
 ---
 
-## 1. Структура хранения
+## Что бэкапится
 
-```bash
-mkdir -p /opt/backups/{db,configs}
-chmod 700 /opt/backups
 ```
+/etc/letsencrypt                        — TLS-сертификаты
+/etc/nginx/sites-available              — Nginx vhosts
+/etc/nginx/snippets
+/etc/nginx/nginx.conf
+/etc/turnserver.conf                    — coturn
+/etc/turnserver-dh.pem
+/etc/ufw                                — UFW правила
+/etc/crowdsec                           — CrowdSec конфиг
+/etc/ssh/sshd_config.d                  — SSH hardening
+/etc/sysctl.d                           — параметры ядра
+/usr/local/etc/xray                     — Xray конфиг + ключи Reality
+/var/backups/dumps/synapse-latest.dump  — Postgres дамп (Matrix)
+/opt/matrix/docker-compose.yml
+/opt/matrix/.env
+/opt/matrix/synapse/data
+/opt/matrix/element/config
+/opt/livekit/docker-compose.yml
+/opt/livekit/.env
+/opt/livekit/config
+```
+
+Также включены сами файлы бэкапа (self-backup): systemd-юниты, скрипт предварительного дампа.
 
 ---
 
-## 2. Скрипт бэкапа
+## Как работает
 
-```bash
-nano /opt/backups/backup.sh
-```
+Последовательность шагов при каждом запуске (`restic-backup.service`):
 
-```bash
-#!/bin/bash
-set -euo pipefail
+1. **Pre-dump** — `restic-predump.sh` делает `pg_dump` Matrix Postgres в `/var/backups/dumps/synapse-latest.dump`
+2. **Backup** — `restic backup` загружает все пути из `restic-includes.txt` в репозиторий
+3. **Forget + Prune** — удаляет снапшоты сверх лимита и освобождает место:
+   - `--keep-daily 7` — 7 ежедневных
+   - `--keep-weekly 4` — 4 еженедельных
+   - `--keep-monthly 6` — 6 ежемесячных
+4. **Check** — быстрая проверка целостности репозитория
 
-BACKUP_DIR=/opt/backups
-DATE=$(date +%Y%m%d-%H%M)
-KEEP_DAYS=7
-
-# --- Postgres (Matrix) ---
-docker exec matrix-postgres pg_dump -U synapse synapse \
-  | gzip > "$BACKUP_DIR/db/matrix-postgres-$DATE.sql.gz"
-
-# --- Конфиги ---
-tar -czf "$BACKUP_DIR/configs/configs-$DATE.tar.gz" \
-  /opt/matrix/synapse \
-  /opt/matrix/element \
-  /opt/livekit \
-  /etc/nginx/sites-enabled \
-  /etc/letsencrypt \
-  /etc/ssh/sshd_config.d \
-  /usr/local/etc/xray/config.json \
-  2>/dev/null
-
-# --- Ротация: удалить старше KEEP_DAYS дней ---
-find "$BACKUP_DIR" -name "*.gz" -mtime +$KEEP_DAYS -delete
-
-echo "[$DATE] Backup completed"
-```
-
-```bash
-chmod 700 /opt/backups/backup.sh
-```
-
-Проверка вручную:
-
-```bash
-/opt/backups/backup.sh && ls -lh /opt/backups/db/ /opt/backups/configs/
-```
+Таймер: ежедневно в **03:00** (`±30 мин` случайный сдвиг), `Persistent=true` — запустится после перезагрузки если пропустил время.
 
 ---
 
-## 3. Автоматизация через systemd timer
-
-Создать unit-файл сервиса:
+## Управление
 
 ```bash
-nano /etc/systemd/system/backup.service
-```
+# Статус таймера и время последнего запуска
+systemctl list-timers restic-backup.timer
 
-```ini
-[Unit]
-Description=VPS Backup
+# Логи последнего запуска
+journalctl -u restic-backup.service -n 50
 
-[Service]
-Type=oneshot
-ExecStart=/opt/backups/backup.sh
-StandardOutput=journal
-StandardError=journal
-```
+# Список снапшотов
+sudo restic --env-file /etc/restic-env snapshots
 
-Создать таймер (ежедневно в 03:00):
+# Запустить бэкап вручную (не дожидаясь таймера)
+sudo systemctl start restic-backup.service
 
-```bash
-nano /etc/systemd/system/backup.timer
-```
-
-```ini
-[Unit]
-Description=Daily VPS Backup
-
-[Timer]
-OnCalendar=*-*-* 03:00:00
-Persistent=true
-
-[Install]
-WantedBy=timers.target
-```
-
-```bash
-systemctl daemon-reload
-systemctl enable --now backup.timer
-
-# Проверить
-systemctl list-timers backup.timer
+# Проверить целостность репозитория
+sudo restic --env-file /etc/restic-env check
 ```
 
 ---
 
-## 4. Удалённое хранение (опционально)
+## Восстановление
 
-Добавить в конец `backup.sh` копирование на внешний хост через rsync:
+### Список файлов в снапшоте
 
 ```bash
-# rsync на удалённый сервер
-rsync -az /opt/backups/ backup-user@REMOTE_HOST:/backups/vps/
+sudo restic --env-file /etc/restic-env ls SNAPSHOT_ID /opt/matrix
 ```
 
-Или через rclone в облако (S3, Backblaze B2, Google Drive):
+### Восстановить конкретный файл
 
 ```bash
-apt install rclone -y
-rclone config  # настроить хранилище
-# Добавить в backup.sh:
-rclone sync /opt/backups/ remote:vps-backups/
+sudo restic --env-file /etc/restic-env restore SNAPSHOT_ID \
+  --include /usr/local/etc/xray/config.json \
+  --target /
 ```
 
----
-
-## 5. Восстановление Postgres
+### Восстановить Postgres (Matrix)
 
 ```bash
-# Остановить Synapse (не трогать postgres-контейнер)
+# 1. Извлечь дамп из снапшота
+sudo restic --env-file /etc/restic-env restore SNAPSHOT_ID \
+  --include /var/backups/dumps/synapse-latest.dump \
+  --target /tmp/restore
+
+# 2. Остановить Synapse
 cd /opt/matrix && docker compose stop synapse
 
-# Восстановить из дампа
-gunzip -c /opt/backups/db/matrix-postgres-YYYYMMDD-HHMM.sql.gz \
+# 3. Восстановить БД
+cat /tmp/restore/var/backups/dumps/synapse-latest.dump \
   | docker exec -i matrix-postgres psql -U synapse synapse
 
-# Запустить Synapse
+# 4. Запустить Synapse
 docker compose start synapse
+```
+
+### Восстановить всё на новый сервер
+
+```bash
+sudo restic --env-file /etc/restic-env restore latest --target /
+```
+
+---
+
+## Обновление списка путей
+
+```bash
+sudo nano /etc/restic-includes.txt
+# Добавить нужные пути, затем проверить:
+sudo systemctl start restic-backup.service
 ```
 
 ---
