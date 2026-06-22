@@ -116,20 +116,12 @@ DNS, Redis, все внутренние порты Matrix и LiveKit — кор�
 | matrix-synapse | matrixdotorg/synapse:latest | `127.0.0.1:8008->8008`, `127.0.0.1:8048->8008` |
 | matrix-postgres | postgres:16-alpine | — |
 
-**Остановлены (Exited):**
-
-| Контейнер | Статус |
-|-----------|--------|
-| geo-bot-app-1 | ⚠️ Exited (1) — упал ~8 ч назад |
-| geo-bot-postgres-1 | Exited (0) |
-| geo-bot-redis-1 | Exited (0) |
 
 ### Расположение compose-проектов
 
 ```
-/opt/matrix/docker-compose.yml               — Matrix (Synapse + Element + Postgres)
-/opt/livekit/docker-compose.yml              — LiveKit + JWT-сервис + Redis
-/home/shoostrik/geo-bot/docker-compose.prod.yml — geo-bot (App + Postgres + Redis)
+/opt/matrix/docker-compose.yml   — Matrix (Synapse + Element + Postgres)
+/opt/livekit/docker-compose.yml  — LiveKit + JWT-сервис + Redis
 ```
 
 ---
@@ -208,7 +200,4 @@ HTTPS через Let's Encrypt (`/etc/letsencrypt/live/doi.by/`).
 
 ## Что требует внимания
 
-| Приоритет | Проблема | Действие |
-|-----------|----------|----------|
-| 🔴 Срочно | `geo-bot-app-1` упал с exit code 1 (~8 ч назад) | Проверить логи: `docker logs geo-bot-app-1` |
-| 🟡 Средний | `geo-bot` размещён в `/home/shoostrik/`, не в `/opt/` | Нарушение конвенции; вынести в `/opt/geo-bot/` |
+Замечаний нет.
