@@ -1,117 +1,30 @@
 # Улучшения безопасности сервера
 
-Список задач по результатам аудита от 2026-05-02.
+Список задач по результатам аудита от 2026-05-02. Все пункты выполнены по состоянию на 2026-06-22.
 
 ---
 
-## 🔴 Высокий приоритет
+## ✅ Выполнено
 
 ### 1. Права доступа к конфигурации Xray
 
-`/usr/local/etc/xray/config.json` имеет права `644` (читаем всеми пользователями системы). Файл содержит REALITY `privateKey` и UUID клиента.
+`/usr/local/etc/xray/config.json` — права изменены на `640 root:nogroup`, три файла бэкапов удалены.
 
-```bash
-chmod 600 /usr/local/etc/xray/config.json
-```
+### 2. Netdata
 
-В той же директории лежат три файла бэкапов со старыми ключами — удалить:
+Доступ ограничен через UFW: разрешён только с IP оператора (`91.149.143.96`), остальным — запрещён.
 
-```bash
-rm /usr/local/etc/xray/config.json.bak
-rm /usr/local/etc/xray/config.json.bak2
-rm /usr/local/etc/xray/config.json.bak-20260419
-```
+### 3. Docker daemon.json
 
----
+Создан `/etc/docker/daemon.json` с ограничением логов, `live-restore`, `no-new-privileges`.
 
-### 2. Netdata открыт на всех интерфейсах
+### 4. SSH sshd_config
 
-`/etc/netdata/netdata.conf` не содержит настроек — используются дефолты, Netdata слушает на `0.0.0.0:19999` без авторизации.
-
-```bash
-nano /etc/netdata/netdata.conf
-```
-
-Добавить:
-
-```ini
-[web]
-    bind to = 127.0.0.1
-```
-
-```bash
-systemctl restart netdata
-```
-
-После этого Netdata доступен только через SSH-туннель:
-
-```bash
-# На локальной машине
-ssh -L 19999:localhost:19999 deploy@YOUR_SERVER_IP -p 2222
-```
-
-> ⚠️ SSH-туннель требует `AllowTcpForwarding yes` в `/etc/ssh/sshd_config.d/hardening.conf`. Сейчас этот параметр выключен — нужно включить перед закрытием Netdata, иначе доступ к мониторингу будет потерян.
-
-Порядок действий:
-1. Включить `AllowTcpForwarding yes` в `hardening.conf` → `systemctl restart ssh`
-2. Проверить туннель: `ssh -L 19999:localhost:19999 deploy@... -p 2222`
-3. Открыть `http://localhost:19999` — убедиться что работает
-4. Добавить `bind to = 127.0.0.1` в netdata.conf → `systemctl restart netdata`
+Старый `hardening.conf` отключён. Активен `99-hardening.conf` с полным набором ограничений (`Port 2222`, `AllowUsers deploy`, `PasswordAuthentication no` и др.).
 
 ---
 
-## 🟡 Средний приоритет
-
-### 3. Создать `/etc/docker/daemon.json`
-
-Без этого файла логи контейнеров растут без ограничений.
-
-```bash
-nano /etc/docker/daemon.json
-```
-
-```json
-{
-  "log-driver": "json-file",
-  "log-opts": {
-    "max-size": "10m",
-    "max-file": "3"
-  },
-  "live-restore": true,
-  "userland-proxy": false,
-  "no-new-privileges": true
-}
-```
-
-```bash
-systemctl restart docker
-```
-
-> Флаг `live-restore` позволяет контейнерам продолжать работу при перезапуске демона Docker.
-
----
-
-### 4. Почистить основной sshd_config
-
-`/etc/ssh/sshd_config` содержит `PermitRootLogin yes` и `X11Forwarding yes`, которые перекрываются `hardening.conf`. Технически безопасно, но создаёт путаницу при аудите.
-
-```bash
-nano /etc/ssh/sshd_config
-```
-
-Удалить или закомментировать:
-```text
-# PermitRootLogin yes   ← убрать (задано в hardening.conf)
-# X11Forwarding yes     ← убрать (задано в hardening.conf)
-```
-
-```bash
-sshd -t && systemctl restart ssh
-```
-
----
-
-## ✅ Что уже настроено корректно
+## ✅ Что настроено корректно (на момент аудита)
 
 | Параметр | Статус |
 |----------|--------|
