@@ -23,6 +23,7 @@ The `docs/` directory contains 10 sequentially numbered guides that must be foll
 9. `09-monitoring.md` — Netdata, access restricted by IP or SSH tunnel
 10. `10-checklist.md` — pre-deploy checklist covering all of the above
 11. `11-vless-xray.md` — VLESS + Reality proxy via Xray (optional, circumvention)
+12. `12-backup.md` — backup strategy: Postgres pg_dump, configs, systemd timer, rotation
 
 ## Conventions
 

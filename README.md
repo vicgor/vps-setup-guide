@@ -18,6 +18,7 @@
 | [09-monitoring.md](docs/09-monitoring.md) | Мониторинг: Netdata |
 | [10-checklist.md](docs/10-checklist.md) | Итоговый чек-лист |
 | [11-vless-xray.md](docs/11-vless-xray.md) | VLESS + Xray (VLESS + Reality) — опционально |
+| [12-backup.md](docs/12-backup.md) | Резервное копирование: Postgres, конфиги, systemd timer |
 
 ## Быстрый старт
 
