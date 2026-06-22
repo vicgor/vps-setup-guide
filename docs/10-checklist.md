@@ -11,6 +11,12 @@
 - [ ] Настроена временная зона (`timedatectl`)
 - [ ] Настроен hostname (`hostnamectl`)
 
+## Система
+
+- [ ] Swap настроен (`swapon --show`)
+- [ ] `vm.swappiness=10` в `/etc/sysctl.d/99-swappiness.conf`
+- [ ] `/swapfile` добавлен в `/etc/fstab`
+
 ## Пользователи
 
 - [ ] Создан непривилегированный пользователь

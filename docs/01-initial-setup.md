@@ -63,7 +63,35 @@ echo "127.0.1.1 my-vps" >> /etc/hosts
 localectl set-locale LANG=en_US.UTF-8
 ```
 
-## 8. Ubuntu Pro (опционально)
+## 8. Swap
+
+VPS-провайдеры часто не настраивают swap. Без него при нехватке RAM ядро убивает процессы (OOM killer).
+
+```bash
+fallocate -l 2G /swapfile
+chmod 600 /swapfile
+mkswap /swapfile
+swapon /swapfile
+
+# Подключить при перезагрузке
+echo '/swapfile none swap sw 0 0' >> /etc/fstab
+```
+
+Снизить агрессивность свопирования (оптимально для сервера):
+
+```bash
+echo 'vm.swappiness=10' > /etc/sysctl.d/99-swappiness.conf
+sysctl -p /etc/sysctl.d/99-swappiness.conf
+```
+
+Проверка:
+
+```bash
+free -h
+swapon --show
+```
+
+## 9. Ubuntu Pro (опционально)
 
 Бесплатная подписка для физических лиц (до 5 машин). Даёт расширенные патчи безопасности (ESM), Livepatch и аудит-инструменты.
 
