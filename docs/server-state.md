@@ -13,6 +13,8 @@
 | Hostname | vmi3240281 |
 | Timezone | Europe/Minsk (+03) |
 | IP | 194.163.161.167 |
+| RAM | 11 ГБ |
+| Swap | 2 ГБ (`/swapfile`, `vm.swappiness=10`) |
 
 ---
 
