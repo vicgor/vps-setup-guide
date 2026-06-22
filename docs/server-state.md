@@ -200,6 +200,22 @@ HTTPS через Let's Encrypt (`/etc/letsencrypt/live/doi.by/`).
 
 ---
 
+## Резервное копирование
+
+Инструмент: **Restic 0.16.4** — инкрементальные снапшоты с дедупликацией.
+
+| Параметр | Значение |
+|----------|----------|
+| Таймер | `restic-backup.timer` — ежедневно в 03:00 (±30 мин) |
+| Последний запуск | 2026-06-22 03:08 |
+| Retention | 7 daily / 4 weekly / 6 monthly |
+| Конфиг | `/etc/restic-env`, `/etc/restic-includes.txt` |
+| Postgres pre-dump | `/usr/local/sbin/restic-predump.sh` → `/var/backups/dumps/synapse-latest.dump` |
+
+Бэкапируется: Matrix (Postgres + конфиги), LiveKit, Nginx, Xray, Let's Encrypt, UFW, CrowdSec, SSH.
+
+---
+
 ## Что требует внимания
 
 Замечаний нет.
