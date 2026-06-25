@@ -137,5 +137,5 @@ sudo systemctl start restic-backup.service
 
 ---
 
-## Следующий шаг
+## Предыдущий шаг
 ← [10-checklist.md](10-checklist.md)
