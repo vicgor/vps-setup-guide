@@ -156,6 +156,18 @@ HTTPS через Let's Encrypt (`/etc/letsencrypt/live/doi.by/`).
 
 Доступен только с IP оператора. SSH-туннель не требуется.
 
+### web_log collector
+
+Мониторинг Nginx-логов настроен в `/etc/netdata/go.d/web_log.conf`:
+
+| Job | Лог-файл |
+|-----|----------|
+| `nginx_default` | `/var/log/nginx/access.log` |
+| `doi.by` | `/var/log/nginx/doi.by_access.log` |
+| `matrix-federation` | `/var/log/nginx/matrix-federation.access.log` |
+
+Алерт `web_log_1m_unmatched` для `nginx_default` заглушён (`/etc/netdata/health.d/web_log_silence.conf`) — default server принимает только мусорный трафик сканеров.
+
 ---
 
 ## Xray
