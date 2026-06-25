@@ -62,7 +62,45 @@ http://localhost:19999
 - **Network**: incoming/outgoing трафик
 - **Docker**: метрики контейнеров (автоопределяется)
 
-## 6. Алёрты и уведомления
+## 6. Мониторинг Nginx-логов (web_log collector)
+
+По умолчанию Netdata парсит только `/var/log/nginx/access.log` (default server). На этот лог попадает мусорный трафик сканеров — запросы с нестандартным форматом вызывают алерт `web_log_1m_unmatched`.
+
+**Правильная конфигурация** — подключить реальные vhost-логи в `/etc/netdata/go.d/web_log.conf`:
+
+```yaml
+jobs:
+  - name: nginx_default
+    path: /var/log/nginx/access.log
+    log_type: auto
+
+  - name: doi.by
+    path: /var/log/nginx/doi.by_access.log
+    log_type: auto
+
+  - name: matrix-federation
+    path: /var/log/nginx/matrix-federation.access.log
+    log_type: auto
+```
+
+Заглушить алерт для default server (там всегда будет мусор от сканеров):
+
+```bash
+nano /etc/netdata/health.d/web_log_silence.conf
+```
+
+```
+ template: web_log_1m_unmatched
+       on: web_log_nginx_default.excluded_requests
+     info: ignored — default server receives scanner traffic only
+       to: silent
+```
+
+```bash
+systemctl restart netdata
+```
+
+## 7. Алёрты и уведомления
 
 ```bash
 # Настройка уведомлений
